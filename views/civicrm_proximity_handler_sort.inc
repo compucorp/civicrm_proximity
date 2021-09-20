@@ -1,40 +1,71 @@
-<?php 
+<?php
 
+/**
+ * Views sorting handler
+ */
 class civicrm_proximity_handler_sort extends views_handler_sort {
-  
-  function option_definition() {
+
+  /**
+   *
+   */
+  public function option_definition() {
+
     $options = parent::option_definition();
+
     $options['location_provider'] = array('default' => '');
     return $options;
+
   }
-  
+
   /**
-   * Basic options for all sort criteria
+   * Basic options for all sort criteria.
    */
-  function options_form(&$form, &$form_state) {
-    
+  public function options_form(&$form, &$form_state) {
+
     if ($handlers = $this->view->display_handler->get_handlers('filter')) {
       $options = array();
+
       foreach ($handlers as $name => $handler) {
-      	if ($handler->definition['handler'] == 'civicrm_proximity_handler_filter_circle') {
-      	  $options[$name] = $handler->definition['group'] .': '. $handler->definition['title'] .' ('. $handler->admin_summary() .')';
-      	}
+        $definition = $handler->definition['handler'];
+
+        if ($definition == 'civicrm_proximity_handler_filter_circle') {
+          $group = $handler->definition['group'];
+          $title = $handler->definition['title'];
+          $admin = $handler->admin_summary();
+
+          $options[$name] = $group . ': ' . $title . ' (' . $admin . ')';
+        }
       }
+
       $form['location_provider'] = array(
-        '#title' => t('Location provider'),
-        '#type' => 'select',
+        '#title'   => t('Location provider'),
+        '#type'    => 'select',
         '#options' => $options,
       );
     }
+
     parent::options_form($form, $form_state);
+
   }
-  
-  function query() {
-    $handler = $this->view->display_handler->get_handler('filter', $this->options['location_provider']);
-    if ($handler && $handler->value['location'] && isset($this->query->table_queue[$handler->table_formula_alias()])) {
-      $this->query->add_orderby($handler->table_formula_alias(), $this->real_field, $this->options['order']);
+
+  /**
+   *
+   */
+  public function query() {
+
+    $this->ensure_my_table();
+
+    $lp      = $this->options['location_provider'];
+    $handler = $this->view->display_handler->get_handler('filter', $lp);
+    $table   = $this->query->table_queue[$handler->table_alias()];
+
+    if ($handler && $handler->value['location'] && isset($table)) {
+      $alias = $handler->table_alias();
+      $field = $this->real_field;
+      $order = $this->options['order'];
+      $this->query->add_orderby($alias, $field, $order);
     }
-    
+
   }
-  
+
 }
