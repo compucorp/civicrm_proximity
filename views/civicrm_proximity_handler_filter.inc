@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Base filter handler for Circular field
+ * Base filter handler for Circular field.
  */
 class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
 
@@ -11,21 +11,21 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
   public $no_single = FALSE;
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function op_between($field) {
     $this->op_process('between', $field);
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function op_simple($field) {
     $this->op_process('simple', $field);
   }
 
   /**
-   *
+   * Process operator.
    */
   public function op_process($op = 'simple', $field) {
     $this->secure_input();
@@ -330,7 +330,7 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
   }
 
   /**
-   *
+   * Clean the inputs.
    */
   public function secure_input() {
     $this->value['value'] = isset($this->value['value']) ? $this->value['value'] : $this->options['value']['value'];
@@ -346,7 +346,12 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
   }
 
   /**
+   * Unset the attributes.
    *
+   * @param $item
+   *   Item information
+   * @param $attributes
+   *   Attributes to be unsetted.
    */
   public function unset_attributes(&$item, $attributes) {
     foreach ($attributes as $name) {
@@ -355,14 +360,24 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
   }
 
   /**
+   * Clean the exposed filters.
    *
+   * @param $item
+   *   Filters to be cleaned.
    */
   public function clean_exposed_filter_item(&$item) {
     $this->unset_attributes($item, array('#prefix', '#suffix', '#title', '#description'));
   }
 
   /**
+   * Expose option in the given form.
    *
+   * @param $form
+   *   Form to be modified.
+   * @param $name
+   *   Name of the option.
+   * @param $title
+   *   Title of the option.
    */
   public function expose_option_form(&$form, $name, $title) {
     $form['expose'][$name] = array(
@@ -382,7 +397,15 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
   }
 
   /**
+   * Rename exposed filter item.
    *
+   * @param $form
+   *   Form to be modified.
+   * @param $name
+   *   Name of the filter.
+   *
+   * @return mixed
+   *   Value of the filter.
    */
   public function rename_exposed_filter_item(&$form, $name) {
     $value      = $this->options['expose'][$name];
@@ -397,14 +420,20 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
   }
 
   /**
+   * Indicates if the filter is exposed.
    *
+   * @param $name
+   *   Name of the filter
+   *
+   * @return bool
+   *   Returns TRUE if the filter is exposed.
    */
   public function filter_item_is_exposed($name) {
-    return !empty($this->options['expose'][$name]) && !empty($this->options['expose'][$name]);
+    return !empty($this->options['expose'][$name]);
   }
 
   /**
-   *
+   * Get the suffix.
    */
   public function get_suffix() {
     $suffix = '';

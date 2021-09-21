@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Define views filter and field. 
+ * Define views filter and field.
  */
 
 /**

@@ -1,27 +1,24 @@
 <?php
 
 /**
- * Views sorting handler
+ * Views sorting handler.
  */
 class civicrm_proximity_handler_sort extends views_handler_sort {
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function option_definition() {
-
     $options = parent::option_definition();
 
     $options['location_provider'] = array('default' => '');
     return $options;
-
   }
 
   /**
-   * Basic options for all sort criteria.
+   * {@inheritdoc}
    */
   public function options_form(&$form, &$form_state) {
-
     if ($handlers = $this->view->display_handler->get_handlers('filter')) {
       $options = array();
 
@@ -38,26 +35,24 @@ class civicrm_proximity_handler_sort extends views_handler_sort {
       }
 
       $form['location_provider'] = array(
-        '#title'   => t('Location provider'),
-        '#type'    => 'select',
+        '#title' => t('Location provider'),
+        '#type' => 'select',
         '#options' => $options,
       );
     }
 
     parent::options_form($form, $form_state);
-
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function query() {
-
     $this->ensure_my_table();
 
-    $lp      = $this->options['location_provider'];
+    $lp = $this->options['location_provider'];
     $handler = $this->view->display_handler->get_handler('filter', $lp);
-    $table   = $this->query->table_queue[$handler->table_alias()];
+    $table = $this->query->table_queue[$handler->table_alias()];
 
     if ($handler && $handler->value['location'] && isset($table)) {
       $alias = $handler->table_alias();
@@ -65,7 +60,6 @@ class civicrm_proximity_handler_sort extends views_handler_sort {
       $order = $this->options['order'];
       $this->query->add_orderby($alias, $field, $order);
     }
-
   }
 
 }

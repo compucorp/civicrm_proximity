@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Distance field handler
+ * Distance field handler.
  */
 class civicrm_proximity_handler_field extends views_handler_field_numeric {
 

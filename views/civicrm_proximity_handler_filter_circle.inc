@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Circular search filter handler
+ * Circular search filter handler.
  */
 class civicrm_proximity_handler_filter_circle extends civicrm_proximity_handler_filter {
 
@@ -97,7 +97,7 @@ class civicrm_proximity_handler_filter_circle extends civicrm_proximity_handler_
   }
 
   /**
-   *
+   * Returns the table formula.
    */
   public function table_formula($lat, $lon, $table) {
     $args = array(
@@ -113,14 +113,14 @@ class civicrm_proximity_handler_filter_circle extends civicrm_proximity_handler_
   }
 
   /**
-   *
+   * Returns the table alias.
    */
   public function table_alias() {
     return $this->table_alias;
   }
 
   /**
-   *
+   * Returns the formula alias.
    */
   public function formula_alias() {
     return $this->table_alias . '_filter_' . $this->options['id'];
