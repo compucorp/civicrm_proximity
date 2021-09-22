@@ -1,40 +1,151 @@
-<?php 
+<?php
 
+/**
+ * Circular search filter handler.
+ */
 class civicrm_proximity_handler_filter_circle extends civicrm_proximity_handler_filter {
- 
+
   /**
    * Process operator.
    */
-  function op_process($op = 'simple', $field) {
+  public function op_process($op = 'simple', $field) {
     parent::op_process($op, $field);
-    
+
     if (!is_null($this->value['lat']) && !is_null($this->value['lon'])) {
-          
-      $this->query->add_field(NULL, $this->table_formula($this->value['lat'], $this->value['lon']), 'distance');
-      
+      $latitude = $this->value['lat'];
+      $longitude = $this->value['lon'];
+      $distance = $this->value['value'];
+
+      $table   = $this->table_alias();
+      $formula = $this->table_formula($latitude, $longitude, $table);
+
+      $this->query->add_field($table, 'distance');
+      $this->query->add_field(NULL, $formula, 'distance');
+
+      $group = $this->options['group'];
+
       if ($op == 'simple') {
-        $radius = $this->value['value'];
-        $where = ($this->operator == '<') ? $this->build_where('<', $radius) : $this->build_where('>', $radius);
+        $operator = $this->operator;
+        $lat_lon = $this->calculate_coordinates($latitude, $longitude, $distance);
+
+        if ($operator == '<') {
+          $this->query->add_where(
+            $group,
+            $table . '.geo_code_1',
+            array($lat_lon['lat1'], $lat_lon['lat2']),
+            'BETWEEN'
+          );
+
+          $this->query->add_where(
+            $group,
+            $table . '.geo_code_2',
+            array($lat_lon['lon1'], $lat_lon['lon2']),
+            'BETWEEN'
+          );
+        }
       }
       else {
-        $inner = $this->build_where('>', $this->value['min']);
-        $outer = $this->build_where('<', $this->value['max']);
-        $where = ($this->operator == 'between') ? "($inner AND $outer)" : "NOT($inner AND $outer)";
+        if ($this->operator == 'between') {
+          $between = array($this->value['min'], $this->value['max']);
+          $upper = $this->calculate_coordinates($latitude, $longitude, $this->value['max']);
+
+          $this->query->add_where(
+            $group,
+            $table . '.geo_code_1',
+            array($upper['lat1'], $upper['lat2']),
+            'BETWEEN'
+          );
+
+          $this->query->add_where(
+            $group,
+            $table . '.geo_code_2',
+            array($upper['lon1'], $upper['lon2']),
+            'BETWEEN'
+          );
+
+          $this->query->add_where(
+            $group,
+            $table . '.geo_code_1',
+            $upper['lat2'],
+            '>'
+          );
+
+          $this->query->add_where(
+            $group,
+            $table . '.geo_code_2',
+            $upper['lon2'],
+            '>'
+          );
+
+          $this->query->add_where(
+            $group,
+            $table . '.distance',
+            $between,
+            'BETWEEN'
+          );
+        }
+        else {
+          $this->query->add_where(
+            $group,
+            db_or()
+              ->condition($table . '.distance', $this->value['min'], '<')
+              ->condition($table . '.distance', $this->value['max'], '>')
+          );
+        }
       }
-      $this->query->add_having($this->options['group'], $where);
     }
   }
 
   /**
-   * Build WHERE clause.
+   * Returns the table formula.
    */
-  function build_where($operator, $radius) {
-    return sprintf("(distance $operator= %f)", $radius);
+  public function table_formula($lat, $lon, $table) {
+    $args = array(
+      ':lat1' => $table . '.geo_code_1',
+      ':lon1' => $table . '.geo_code_2',
+      ':lat2' => $lat,
+      ':lon2' => $lon,
+    );
+
+    $great_circle = strtr(CIVICRM_PROXIMITY_SQL_GREAT_CIRCLE, $args);
+
+    return "$great_circle";
   }
 
-  function table_formula($lat, $lon) {
-    $args = array('!lat1' => 'geo_code_1', '!lon1' => 'geo_code_2', '!lat2' => $lat, '!lon2' => $lon);
-    $great_circle = strtr(CIVICRM_PROXIMITY_SQL_GREAT_CIRCLE, $args);
-    return "($great_circle)";
+  /**
+   * Returns the table alias.
+   */
+  public function table_alias() {
+    return $this->table_alias;
   }
+
+  /**
+   * Returns the formula alias.
+   */
+  public function formula_alias() {
+    return $this->table_alias . '_filter_' . $this->options['id'];
+  }
+
+  /**
+   * Function to calculate the needed coordinates.
+   *
+   * @param float $lat:
+   *   The starting point latitude.
+   * @param float $lon:
+   *   The starting point longitude.
+   * @param float $dist:
+   *   The radius of the search circle.
+   */
+  public function calculate_coordinates($lat, $lon, $dist) {
+    $vals = array();
+
+    $vals['lon1'] = $lon - $dist / abs(cos(deg2rad($lat)) * 111);
+    $vals['lon2'] = $lon + $dist / abs(cos(deg2rad($lat)) * 111);
+
+    $vals['lat1'] = $lat - ($dist / 111);
+    $vals['lat2'] = $lat + ($dist / 111);
+
+    return $vals;
+  }
+
 }

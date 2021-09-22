@@ -1,4 +1,9 @@
-.civicrm-proximity-filter-exposed .form-item {
+.views-widget-filter-circle .views-operator,
+.views-widget-filter-circle .form-item {
   float: left;
-  padding-right: 5px;
+  margin-right: 10px;
+}
+
+.views-widget-filter-circle .form-item-circle-location {
+  clear: both;
 }
