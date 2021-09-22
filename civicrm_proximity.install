@@ -44,6 +44,12 @@ function civicrm_proximity_install() {
     }
     else {
       db_add_field('civicrm_address', $field, $spec);
+
+      if (CRM_Core_Config::singleton()->logging) {
+        // This fixes the logging tables, because of this new field added.
+        $schema = new CRM_Logging_Schema();
+        $schema->fixSchemaDifferences();
+      }
     }
   }
 }
