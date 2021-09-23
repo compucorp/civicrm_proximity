@@ -47,7 +47,7 @@ function civicrm_proximity_menu() {
 }
 
 /**
- * Implements hook_measurement_units()
+ * Implements hook_measurement_units().
  *
  * Expose available units of measurement. To perform conversion
  * we must implement, for each unit, its respective:
@@ -119,12 +119,13 @@ function civicrm_proximity_measurement_units_convert_back($unit, $value) {
 /**
  * Query Google geocoding web service.
  *
- * @param $address
+ * @param string $address
  *   Address or location name.
  *
- * @return Geocoder response.
+ * @return array
+ *   Geocoder's response.
  */
-function civicrm_proximity_geocode($address) {
+function civicrm_proximity_geocode(string $address) {
   $locs = $args = array();
 
   $args['address'] = str_replace(' ', '+', $address);

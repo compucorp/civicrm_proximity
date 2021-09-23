@@ -9,5 +9,8 @@
   <!-- Drupal sniffs -->
   <rule ref="bin/drupal/coder/coder_sniffer/Drupal">
     <exclude name="Drupal.Files.TxtFileLineLength.TooLong"/>
+    <exclude name="Drupal.NamingConventions.ValidClassName"/>
+    <exclude name="Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps"/>
+    <exclude name="Drupal.NamingConventions.ValidVariableName.LowerCamelName"/>
   </rule>
 </ruleset>

@@ -8,7 +8,7 @@ class civicrm_proximity_handler_filter_circle extends civicrm_proximity_handler_
   /**
    * Process operator.
    */
-  public function op_process($op = 'simple', $field) {
+  public function op_process($op = 'simple', $field = NULL) {
     parent::op_process($op, $field);
 
     if (!is_null($this->value['lat']) && !is_null($this->value['lon'])) {
@@ -129,11 +129,11 @@ class civicrm_proximity_handler_filter_circle extends civicrm_proximity_handler_
   /**
    * Function to calculate the needed coordinates.
    *
-   * @param float $lat:
+   * @param float $lat
    *   The starting point latitude.
-   * @param float $lon:
+   * @param float $lon
    *   The starting point longitude.
-   * @param float $dist:
+   * @param float $dist
    *   The radius of the search circle.
    */
   public function calculate_coordinates($lat, $lon, $dist) {

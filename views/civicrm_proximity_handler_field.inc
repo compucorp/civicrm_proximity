@@ -22,8 +22,9 @@ class civicrm_proximity_handler_field extends views_handler_field_numeric {
   }
 
   /**
-   * Basic options for all sort criteria
-   * Overwrite views_handler_field_numeric::options_form().
+   * Basic options for all sort criteria.
+   *
+   * @see views_handler_field_numeric::options_form()
    */
   public function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);

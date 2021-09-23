@@ -7,6 +7,8 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
 
   /**
    * Exposed filter options.
+   *
+   * @var bool
    */
   public $no_single = FALSE;
 
@@ -27,14 +29,15 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
   /**
    * Process operator.
    */
-  public function op_process($op = 'simple', $field) {
+  public function op_process($op = 'simple', $field = NULL) {
     $this->secure_input();
     $this->process_location_proximity();
   }
 
   /**
-   * Display the filter on the administrative summary
-   * Overwrite of views_handler_filter_numeric::admin_summary().
+   * Display the filter on the administrative summary.
+   *
+   * @see views_handler_filter_numeric::admin_summary()
    */
   public function admin_summary() {
     if (!empty($this->options['exposed'])) {
@@ -84,7 +87,8 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
 
   /**
    * Provide default options for exposed filters.
-   * Overwrite of views_handler_filter::expose_options().
+   *
+   * @see views_handler_filter::expose_options()
    */
   public function expose_options() {
     parent::expose_options();
@@ -96,7 +100,8 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
 
   /**
    * Handle the "left" side of the exposed options form.
-   * Overwrite of views_handler_filter::expose_form().
+   *
+   * @see views_handler_filter::expose_form()
    */
   public function expose_form(&$form, &$form_state) {
     parent::expose_form($form, $form_state);
@@ -106,8 +111,9 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
   }
 
   /**
-   * Provide a simple textfield for equality
-   * Overwrite of views_handler_filter_numeric::value_form().
+   * Provide a simple textfield for equality.
+   *
+   * @see views_handler_filter_numeric::value_form()
    */
   public function value_form(&$form, &$form_state) {
     parent::value_form($form, $form_state);
@@ -145,7 +151,8 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
 
   /**
    * Provide a form for setting the operator.
-   * Overwrite of views_handler_filter::operator_form().
+   *
+   * @see views_handler_filter::operator_form()
    */
   public function operator_form(&$form, &$form_state) {
     parent::operator_form($form, $form_state);
@@ -156,8 +163,9 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
   }
 
   /**
-   * Render our chunk of the exposed filter form when selecting
-   * Overwrite of views_handler_filter::exposed_form().
+   * Render our chunk of the exposed filter form when selecting.
+   *
+   * @see views_handler_filter::exposed_form()
    */
   public function exposed_form(&$form, &$form_state) {
     if (empty($this->options['exposed'])) {
@@ -259,8 +267,8 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
         $identifier['max']['#field_prefix'] = t('and');
         $identifier['max']['#field_suffix'] = $this->get_suffix();
 
-        $this->unset_attributes($identifier['max'], array('#title', '#default_value'));
-        $this->unset_attributes($identifier['min'], array('#default_value'));
+        $this->unset_attributes($identifier['max'], ['#title', '#default_value']);
+        $this->unset_attributes($identifier['min'], ['#default_value']);
       }
     }
   }
@@ -348,12 +356,12 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
   /**
    * Unset the attributes.
    *
-   * @param $item
-   *   Item information
-   * @param $attributes
+   * @param array $item
+   *   Item information.
+   * @param array $attributes
    *   Attributes to be unsetted.
    */
-  public function unset_attributes(&$item, $attributes) {
+  public function unset_attributes(array &$item, array $attributes) {
     foreach ($attributes as $name) {
       unset($item[$name]);
     }
@@ -362,24 +370,29 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
   /**
    * Clean the exposed filters.
    *
-   * @param $item
+   * @param array $item
    *   Filters to be cleaned.
    */
-  public function clean_exposed_filter_item(&$item) {
-    $this->unset_attributes($item, array('#prefix', '#suffix', '#title', '#description'));
+  public function clean_exposed_filter_item(array &$item) {
+    $this->unset_attributes($item, [
+      '#prefix',
+      '#suffix',
+      '#title',
+      '#description',
+    ]);
   }
 
   /**
    * Expose option in the given form.
    *
-   * @param $form
+   * @param array $form
    *   Form to be modified.
-   * @param $name
+   * @param string $name
    *   Name of the option.
-   * @param $title
+   * @param string $title
    *   Title of the option.
    */
-  public function expose_option_form(&$form, $name, $title) {
+  public function expose_option_form(array &$form, string $name, string $title) {
     $form['expose'][$name] = array(
       '#type'          => 'checkbox',
       '#title'         => t('Unlock @title', array('@title' => $title)),
@@ -399,15 +412,15 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
   /**
    * Rename exposed filter item.
    *
-   * @param $form
+   * @param array $form
    *   Form to be modified.
-   * @param $name
+   * @param string $name
    *   Name of the filter.
    *
    * @return mixed
    *   Value of the filter.
    */
-  public function rename_exposed_filter_item(&$form, $name) {
+  public function rename_exposed_filter_item(array &$form, string $name) {
     $value      = $this->options['expose'][$name];
     $identifier = $this->options['expose']['identifier'];
 
@@ -422,13 +435,13 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
   /**
    * Indicates if the filter is exposed.
    *
-   * @param $name
-   *   Name of the filter
+   * @param string $name
+   *   Name of the filter.
    *
    * @return bool
    *   Returns TRUE if the filter is exposed.
    */
-  public function filter_item_is_exposed($name) {
+  public function filter_item_is_exposed(string $name) {
     return !empty($this->options['expose'][$name]);
   }
 
@@ -444,7 +457,11 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
       $suffix = '@unit ' . $suffix;
     }
 
-    return t($suffix, array('@unit' => $units[$this->options['value']['unit']]['long'], '@location' => $this->options['value']['location']));
+    // phpcs:ignore Drupal.Semantics.FunctionT.NotLiteralString
+    return t($suffix, [
+      '@unit' => $units[$this->options['value']['unit']]['long'],
+      '@location' => $this->options['value']['location'],
+    ]);
   }
 
 }
