@@ -280,10 +280,9 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
     parent::exposed_validate($form, $form_state);
 
     // Sanitize "value", "min" and "max".
-    $operators  = $this->operators();
     $identifier = $this->options['expose']['identifier'];
-    $operator   = $this->options['expose']['operator'];
-    $location   = $this->options['expose']['location'];
+    $operator = $this->options['expose']['operator'];
+    $location = $this->options['expose']['location'];
 
     foreach (['value', 'min', 'max'] as $field) {
       if (isset($form_state['values'][$identifier][$field])) {
@@ -341,12 +340,12 @@ class civicrm_proximity_handler_filter extends views_handler_filter_numeric {
    * Clean the inputs.
    */
   public function secure_input() {
-    $this->value['value'] = isset($this->value['value']) ? $this->value['value'] : $this->options['value']['value'];
-    $this->value['min'] = isset($this->value['min']) ? $this->value['min'] : $this->options['value']['min'];
-    $this->value['max'] = isset($this->value['max']) ? $this->value['max'] : $this->options['value']['max'];
+    $this->value['value'] = $this->value['value'] ?? $this->options['value']['value'];
+    $this->value['min'] = $this->value['min'] ?? $this->options['value']['min'];
+    $this->value['max'] = $this->value['max'] ?? $this->options['value']['max'];
 
-    $this->value['location'] = isset($this->value[$this->options['expose']['location']]) ? $this->value[$this->options['expose']['location']] : $this->options['value']['location'];
-    $this->value['unit'] = isset($this->value[$this->options['expose']['unit']]) ? $this->value[$this->options['expose']['unit']] : $this->options['value']['unit'];
+    $this->value['location'] = $this->value[$this->options['expose']['location']] ?? $this->options['value']['location'];
+    $this->value['unit'] = $this->value[$this->options['expose']['unit']] ?? $this->options['value']['unit'];
   }
 
   /**

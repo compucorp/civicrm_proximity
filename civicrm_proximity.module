@@ -134,7 +134,7 @@ function civicrm_proximity_geocode(string $address) {
   $args['language'] = $language->language;
   $args['oe'] = 'utf-8';
   $args['sensor'] = 'false';
-  $args['key'] = $key = trim(variable_get('civicrm_proximity_geoloc_apikey', ''));
+  $args['key'] = trim(variable_get('civicrm_proximity_geoloc_apikey', ''));
 
   $query = http_build_query($args, '', '&');
 

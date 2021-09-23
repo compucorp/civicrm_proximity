@@ -94,8 +94,6 @@ class civicrm_proximity_handler_field extends views_handler_field_numeric {
 
       if (!empty($this->options['set_precision'])) {
         $p = $this->options['precision'];
-        $d = $this->options['decimal'];
-        $s = $this->options['separator'];
 
         $value = round($distance, $p);
       }
