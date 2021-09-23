@@ -16,7 +16,7 @@ class civicrm_proximity_handler_filter_circle extends civicrm_proximity_handler_
       $longitude = $this->value['lon'];
       $distance = $this->value['value'];
 
-      $table   = $this->table_alias();
+      $table = $this->table_alias();
       $formula = $this->table_formula($latitude, $longitude, $table);
 
       $this->query->add_field($table, 'distance');
@@ -32,34 +32,34 @@ class civicrm_proximity_handler_filter_circle extends civicrm_proximity_handler_
           $this->query->add_where(
             $group,
             $table . '.geo_code_1',
-            array($lat_lon['lat1'], $lat_lon['lat2']),
+            [$lat_lon['lat1'], $lat_lon['lat2']],
             'BETWEEN'
           );
 
           $this->query->add_where(
             $group,
             $table . '.geo_code_2',
-            array($lat_lon['lon1'], $lat_lon['lon2']),
+            [$lat_lon['lon1'], $lat_lon['lon2']],
             'BETWEEN'
           );
         }
       }
       else {
         if ($this->operator == 'between') {
-          $between = array($this->value['min'], $this->value['max']);
+          $between = [$this->value['min'], $this->value['max']];
           $upper = $this->calculate_coordinates($latitude, $longitude, $this->value['max']);
 
           $this->query->add_where(
             $group,
             $table . '.geo_code_1',
-            array($upper['lat1'], $upper['lat2']),
+            [$upper['lat1'], $upper['lat2']],
             'BETWEEN'
           );
 
           $this->query->add_where(
             $group,
             $table . '.geo_code_2',
-            array($upper['lon1'], $upper['lon2']),
+            [$upper['lon1'], $upper['lon2']],
             'BETWEEN'
           );
 
@@ -100,12 +100,12 @@ class civicrm_proximity_handler_filter_circle extends civicrm_proximity_handler_
    * Returns the table formula.
    */
   public function table_formula($lat, $lon, $table) {
-    $args = array(
+    $args = [
       ':lat1' => $table . '.geo_code_1',
       ':lon1' => $table . '.geo_code_2',
       ':lat2' => $lat,
       ':lon2' => $lon,
-    );
+    ];
 
     $great_circle = strtr(CIVICRM_PROXIMITY_SQL_GREAT_CIRCLE, $args);
 
@@ -137,7 +137,7 @@ class civicrm_proximity_handler_filter_circle extends civicrm_proximity_handler_
    *   The radius of the search circle.
    */
   public function calculate_coordinates($lat, $lon, $dist) {
-    $vals = array();
+    $vals = [];
 
     $vals['lon1'] = $lon - $dist / abs(cos(deg2rad($lat)) * 111);
     $vals['lon2'] = $lon + $dist / abs(cos(deg2rad($lat)) * 111);
