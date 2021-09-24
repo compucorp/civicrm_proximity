@@ -11,10 +11,10 @@ class civicrm_proximity_handler_field extends views_handler_field_numeric {
   public function option_definition() {
     $options = parent::option_definition();
 
-    $options['location_provider'] = array('default' => '');
-    $options['set_precision']     = array('default' => TRUE);
-    $options['precision']         = array('default' => 1);
-    $options['hide_empty']        = array('default' => TRUE);
+    $options['location_provider'] = ['default' => ''];
+    $options['set_precision'] = ['default' => TRUE];
+    $options['precision'] = ['default' => 1];
+    $options['hide_empty'] = ['default' => TRUE];
 
     $this->definition['float'] = TRUE;
 
@@ -22,14 +22,15 @@ class civicrm_proximity_handler_field extends views_handler_field_numeric {
   }
 
   /**
-   * Basic options for all sort criteria
-   * Overwrite views_handler_field_numeric::options_form().
+   * Basic options for all sort criteria.
+   *
+   * @see views_handler_field_numeric::options_form()
    */
   public function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
 
     if ($handlers = $this->view->display_handler->get_handlers('filter')) {
-      $options = array();
+      $options = [];
 
       foreach ($handlers as $name => $handler) {
         $handler_def = $handler->definition['handler'];
@@ -42,11 +43,11 @@ class civicrm_proximity_handler_field extends views_handler_field_numeric {
         }
       }
 
-      $form['location_provider'] = array(
-        '#title'   => t('Search from'),
-        '#type'    => 'select',
+      $form['location_provider'] = [
+        '#title' => t('Search from'),
+        '#type' => 'select',
         '#options' => $options,
-      );
+      ];
     }
   }
 
@@ -54,9 +55,9 @@ class civicrm_proximity_handler_field extends views_handler_field_numeric {
    * Overwrite views_handler_field_numeric::query().
    */
   public function query() {
-    $lp      = $this->options['location_provider'];
+    $lp = $this->options['location_provider'];
     $handler = $this->view->display_handler->get_handler('filter', $lp);
-    $alias   = $handler->table_alias();
+    $alias = $handler->table_alias();
 
     if ($handler
     && $handler->value['location']
@@ -83,7 +84,7 @@ class civicrm_proximity_handler_field extends views_handler_field_numeric {
       // Get the unit of measurement.
       $exp_unit = $handler->value[$handler->options['expose']['unit']];
       $hid_unit = $handler->value['unit'];
-      $unit     = $handler->options['exposed'] ? $exp_unit : $hid_unit;
+      $unit = $handler->options['exposed'] ? $exp_unit : $hid_unit;
       $distance = $value->distance;
 
       // Convert back to kilometers.
@@ -93,8 +94,6 @@ class civicrm_proximity_handler_field extends views_handler_field_numeric {
 
       if (!empty($this->options['set_precision'])) {
         $p = $this->options['precision'];
-        $d = $this->options['decimal'];
-        $s = $this->options['separator'];
 
         $value = round($distance, $p);
       }
@@ -111,9 +110,9 @@ class civicrm_proximity_handler_field extends views_handler_field_numeric {
       }
 
       $units = civicrm_proximity_get_available_units();
-      $pre   = $this->options['prefix'];
+      $pre = $this->options['prefix'];
       $short = $units[$unit]['short'];
-      $suf   = $this->options['suffix'];
+      $suf = $this->options['suffix'];
 
       return $this->sanitize_value($pre . $value . ' ' . $short . ' ' . $suf);
     }

@@ -23,10 +23,10 @@ function civicrm_proximity_init() {
  * Implements hook_views_api().
  */
 function civicrm_proximity_views_api() {
-  return array(
-    'api'  => 3,
+  return [
+    'api' => 3,
     'path' => drupal_get_path('module', 'civicrm_proximity'),
-  );
+  ];
 }
 
 /**
@@ -47,25 +47,25 @@ function civicrm_proximity_menu() {
 }
 
 /**
- * Implements hook_measurement_units()
+ * Implements hook_measurement_units().
  *
  * Expose available units of measurement. To perform conversion
  * we must implement, for each unit, its respective:
  * hook_measurement_units_convert(<UNIT>, <VALUE>).
  */
 function civicrm_proximity_measurement_units() {
-  return array(
-    'km' => array(
-      'long'  => t('Kilometers'),
+  return [
+    'km' => [
+      'long' => t('Kilometers'),
       'short' => t('Km'),
       'const' => 0.62137,
-    ),
-    'miles' => array(
-      'long'  => t('Miles'),
+    ],
+    'miles' => [
+      'long' => t('Miles'),
       'short' => t('Mi'),
       'const' => 1.609344,
-    ),
-  );
+    ],
+  ];
 }
 
 /**
@@ -79,7 +79,7 @@ function civicrm_proximity_get_available_units() {
  * Gets available unit of measurement as select options.
  */
 function civicrm_proximity_get_available_units_for_select() {
-  $units = array();
+  $units = [];
 
   foreach (civicrm_proximity_measurement_units() as $unit => $info) {
     $units[$unit] = $info['long'];
@@ -119,13 +119,14 @@ function civicrm_proximity_measurement_units_convert_back($unit, $value) {
 /**
  * Query Google geocoding web service.
  *
- * @param $address
+ * @param string $address
  *   Address or location name.
  *
- * @return Geocoder response.
+ * @return array
+ *   Geocoder's response.
  */
-function civicrm_proximity_geocode($address) {
-  $locs = $args = array();
+function civicrm_proximity_geocode(string $address) {
+  $locs = $args = [];
 
   $args['address'] = str_replace(' ', '+', $address);
 
@@ -133,7 +134,7 @@ function civicrm_proximity_geocode($address) {
   $args['language'] = $language->language;
   $args['oe'] = 'utf-8';
   $args['sensor'] = 'false';
-  $args['key'] = $key = trim(variable_get('civicrm_proximity_geoloc_apikey', ''));
+  $args['key'] = trim(variable_get('civicrm_proximity_geoloc_apikey', ''));
 
   $query = http_build_query($args, '', '&');
 
@@ -152,7 +153,7 @@ function civicrm_proximity_geocode($address) {
 
   if ($response->status == CIVICRM_PROXIMITY_GOOGLE_STATUS_OK) {
     foreach ($response->results as $result) {
-      $loc = $components = array();
+      $loc = $components = [];
 
       foreach ($result->address_components as $component) {
         $key = $component->types[0];

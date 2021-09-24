@@ -11,7 +11,7 @@ class civicrm_proximity_handler_sort extends views_handler_sort {
   public function option_definition() {
     $options = parent::option_definition();
 
-    $options['location_provider'] = array('default' => '');
+    $options['location_provider'] = ['default' => ''];
     return $options;
   }
 
@@ -20,7 +20,7 @@ class civicrm_proximity_handler_sort extends views_handler_sort {
    */
   public function options_form(&$form, &$form_state) {
     if ($handlers = $this->view->display_handler->get_handlers('filter')) {
-      $options = array();
+      $options = [];
 
       foreach ($handlers as $name => $handler) {
         $definition = $handler->definition['handler'];
@@ -34,11 +34,11 @@ class civicrm_proximity_handler_sort extends views_handler_sort {
         }
       }
 
-      $form['location_provider'] = array(
+      $form['location_provider'] = [
         '#title' => t('Location provider'),
         '#type' => 'select',
         '#options' => $options,
-      );
+      ];
     }
 
     parent::options_form($form, $form_state);
